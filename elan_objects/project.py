@@ -1,7 +1,13 @@
+from elan_objects.entity import Entity
+# from pathlib import Path
 
-class Project(object):
-    def __init__(self, data):
+class Project(Entity):
+
+    def __init__(self, data, work_root):
         self.__dict__ = data
+        self.work_root = work_root
+        self.id = self.projectID
+        self.name = self.name.strip().replace('/','-')
 
 
 # ProjectLarge {

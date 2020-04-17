@@ -41,16 +41,16 @@ class Elan(object):
             return r.json()
 
 
-    def get_projects(self):
+    def get_projects(self, project_root):
         parts = ['api', self.version, 'projects']
         url = urljoin(self.baseuri, '/'.join(parts))
         r = self.get(url)
         projects = []
         for p in r['data']:
-            projects.append(Project(p))
+            projects.append(Project(p, project_root))
         return projects
 
-    def get_studies(self, project_id=None, study_id=None):
+    def get_studies(self, project_dir,project_id=None, study_id=None):
         parts = ['api', self.version, 'studies']
         url = urljoin(self.baseuri, '/'.join(parts))
         params = {}
@@ -62,7 +62,7 @@ class Elan(object):
         r = self.get(url, params)
         studies = []
         for s in r['data']:
-            studies.append(Study(s))
+            studies.append(Study(s, project_dir))
         return studies
 
     def get_experiments(self, project_id=None, study_id=None):

@@ -1,7 +1,11 @@
-class Study(object):
-    def __init__(self, data):
-        self.__dict__ = data
+from elan_objects.entity import Entity
 
+class Study(Entity):
+    def __init__(self, data,work_root):
+        self.__dict__ = data
+        self.work_root = work_root
+        self.id = self.studyID
+        self.name = self.name.strip().replace('/','-')
 
 # StudyLarge {
 # studyStatus (StudyStatus, optional),
