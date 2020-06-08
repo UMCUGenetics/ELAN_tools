@@ -8,6 +8,7 @@ class Project(Entity):
         self.work_root = work_root
         self.id = self.projectID
         self.name = self.name.strip().replace('/','-')
+        self.name = self.name.strip().replace(' ','_')
 
     # def createDir(self):
     #     project_dir = super(Project, self).createDir()

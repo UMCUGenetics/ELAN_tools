@@ -8,7 +8,7 @@ class Study(Entity):
         self.work_root = work_root
         self.id = self.studyID
         self.name = self.name.strip().replace('/','-')
-
+        self.name = self.name.strip().replace(' ','_')
     def createDir(self):
         study_dir = super(Study, self).createDir()
         # study_dir.chmod(0o750)

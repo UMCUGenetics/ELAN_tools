@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>Cuppen backup update</title>
+  <style type="text/css">
+    body{
+      font-family: "Open Sans", sans-serif;
+    }
+
+    h3{
+      color: rgb(0,113,169);
+      text-align: center;
+    }
+    .useq_table {
+      font-family: "Open Sans", sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .useq_table td, .useq_table th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .useq_table tr:nth-child(even){background-color: #f2f2f2;}
+
+    .useq_table tr:hover {background-color: #ddd;}
+
+    .useq_table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: center;
+      background-color: rgb(0,113,169);
+      color: white;
+    }
+
+
+    a {
+      color: #f77a1e;
+    }
+  </style>
+</head>
+<body >
+    <p>Dear {{ user }},</p>
+    <p>The following files/directories where recently backed up from {{workdir}} to {{backupdir}} :</p>
+    <table class='useq_table'>
+      <tr >
+        <th><b>Backup timestamp</b></th>
+        <th><b>File/Directory</b></th>
+        <th><b>Last Modified</b></th>
+      </tr>
+      {% for row in lines|sort %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p>Best,</p>
+    <p>Sander</p>
+</body>
+
+</html>
