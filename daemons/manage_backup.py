@@ -15,7 +15,7 @@ def backup(elan,project_workdir, project_backup,admin_mail):
                                             subject=u"ELAN_tools manage_backup error!")
     logger = logging.getLogger()
     logger.addHandler(smtp_handler)
-
+    errors = []
     p = Path(project_workdir)
     backup_logs = {}
     for d in p.glob('*/*/backup'):
@@ -25,6 +25,9 @@ def backup(elan,project_workdir, project_backup,admin_mail):
             for link in d.iterdir():
                 if link.is_symlink():
                     resolved_link = link.resolve()
+                    if not resolved_link.exists():
+                        errors.append (f'Linked file does not exist: {resolved_link}')
+                        continue
                     print (f'Making backup of {resolved_link}')
                     try:
                         if len(resolved_link.relative_to(project_workdir).parts) >= 4:
@@ -44,7 +47,10 @@ def backup(elan,project_workdir, project_backup,admin_mail):
                                 backup_logs[resolved_link.owner()].extend([x.replace('Last Modified ','').replace("'",'').split(";") for x in sync_result.stdout.decode('utf-8').split("\n") if "Last Modified" in x])
 
                     except:
-                        logger.exception(f'An exception occurred while backing up {resolved_link} to {backup_loc}')
+                        errors.append(f'An exception occurred while backing up {resolved_link} to {backup_loc}')
+
+    if errors:
+        logger.exception("\n".join(errors))
 
     all_lines = []
     for user in backup_logs:
