@@ -25,6 +25,7 @@ def backup(elan,project_workdir, project_backup,admin_mail):
             for link in d.iterdir():
                 if link.is_symlink():
                     resolved_link = link.resolve()
+
                     if not resolved_link.exists():
                         errors.append (f'Linked file does not exist: {resolved_link}')
                         continue
@@ -32,7 +33,7 @@ def backup(elan,project_workdir, project_backup,admin_mail):
                     try:
                         if len(resolved_link.relative_to(project_workdir).parts) >= 4:
                             backup_loc = Path(f'{project_backup}/{resolved_link.relative_to(project_workdir)}')
-
+                            sync_result = None
                             if not backup_loc.parent.is_dir():
                                 subprocess.run(["mkdir", "-p", f'{backup_loc.parent}'])
 
@@ -42,12 +43,12 @@ def backup(elan,project_workdir, project_backup,admin_mail):
                                 sync_result = subprocess.run (["rsync","-av","--out-format='%t;/%f;Last Modified %M'",f'{resolved_link}/',f'{backup_loc}/'],stdout=subprocess.PIPE)
 
 
-                            if "Last Modified" in sync_result.stdout.decode('utf-8'):
+                            if sync_result and "Last Modified" in sync_result.stdout.decode('utf-8'):
                                 if resolved_link.owner() not in backup_logs: backup_logs[resolved_link.owner()] = []
                                 backup_logs[resolved_link.owner()].extend([x.replace('Last Modified ','').replace("'",'').split(";") for x in sync_result.stdout.decode('utf-8').split("\n") if "Last Modified" in x])
 
-                    except:
-                        errors.append(f'An exception occurred while backing up {resolved_link} to {backup_loc}')
+                    except Exception as e:
+                        errors.append(f'An exception occurred while backing up {resolved_link} to {backup_loc} with message {e}')
 
     if errors:
         logger.exception("\n".join(errors))
