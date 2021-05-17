@@ -25,14 +25,15 @@ def backup(elan,project_workdir, project_backup,admin_mail):
             for link in d.iterdir():
                 if link.is_symlink():
                     resolved_link = link.resolve()
-
+                    backup_loc = Path(f'{project_backup}/{resolved_link.relative_to(project_workdir)}')
+                    # print(backup_loc)
                     if not resolved_link.exists():
-                        errors.append (f'Linked file does not exist: {resolved_link}')
+                        if not backup_loc.exists():
+                            errors.append (f'Linked file does not exist: {resolved_link}')
                         continue
                     print (f'Making backup of {resolved_link}')
                     try:
                         if len(resolved_link.relative_to(project_workdir).parts) >= 4:
-                            backup_loc = Path(f'{project_backup}/{resolved_link.relative_to(project_workdir)}')
                             sync_result = None
                             if not backup_loc.parent.is_dir():
                                 subprocess.run(["mkdir", "-p", f'{backup_loc.parent}'])
